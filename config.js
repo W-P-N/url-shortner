@@ -1,4 +1,4 @@
-import { createClient, SCHEMA_FIELD_TYPE,  } from 'redis';
+import { createClient } from 'redis';
 
 async function connectDb() {
     const client = createClient({
@@ -14,6 +14,8 @@ async function connectDb() {
     
     await client.connect();
     console.log("Database Connected");
+
+    return client;
 };
 
 export default async function configure() {

@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import cors from 'cors';
 import { createClient } from 'redis';
 import bcrypt from 'bcryptjs';
+import configure from './config.js';
 
 const app = express();
 // To Parse JSON data - application/json
@@ -16,19 +17,7 @@ dotenv.config({
 });
 
 // Database connection
-const client = createClient({
-    username: 'default',
-    password: process.env.REDIS_DB_PASSWORD,
-    socket: {
-        host: process.env.REDIS_DB_HOST,
-        port: process.env.REDIS_PORT
-    }
-});
-
-client.on('error', err => console.log('Redis Client Error', err));
-
-await client.connect();
-console.log("Database Connected");
+const client = await configure();
 
 app.get('/:link', async(req, res) => {
     try {
