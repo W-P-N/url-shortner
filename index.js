@@ -19,6 +19,29 @@ dotenv.config({
 // Database connection
 const client = await configure();
 
+// Functions
+function validateUrl(url) {
+    try {
+        const url = new URL(url);
+        // Restricted to 'http' and 'https'
+        if(!['http:', 'https:'].includes(url.protocol)) {
+            return false;
+        };
+        // Length constraint
+        if(url.length > 2048) {
+            return false;
+        };
+        // Embedded credentials not allowed
+        if(url.username || url.password) {
+            return false;
+        };
+        return true;
+    } catch (error) {
+        console.error('URL Validation: ', error);
+        return false;
+    }
+};
+
 app.get('/:link', async(req, res) => {
     try {
         const long_url = await client.hGet(`links:${req.params.link}`, 'l_url');
@@ -36,6 +59,9 @@ app.get('/:link', async(req, res) => {
 
 app.post('/api/link', async (req,res) => {
     const url = req.body.url;
+    if(!validateUrl(url)) {
+        return res.status(400).send({message: "Malformed URL sent."});
+    };
     const new_url_nano = nanoid(7);
     const new_url = `http://127.0.0.1:${process.env.PORT}/${new_url_nano}`;
     const url_map = {
