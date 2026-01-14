@@ -20,15 +20,15 @@ dotenv.config({
 const client = await configure();
 
 // Functions
-function validateUrl(url) {
+function validateUrl(input) {
     try {
-        const url = new URL(url);
+        const url = new URL(input);
         // Restricted to 'http' and 'https'
         if(!['http:', 'https:'].includes(url.protocol)) {
             return false;
         };
         // Length constraint
-        if(url.length > 2048) {
+        if(input.length > 2048) {
             return false;
         };
         // Embedded credentials not allowed
@@ -44,6 +44,10 @@ function validateUrl(url) {
 
 app.get('/:link', async(req, res) => {
     try {
+        const input = req.params.link;
+        if(!input || input.length < process.env.LINK_LENGTH) {
+            return res.status(400).send({message: "Invalid input"});
+        };
         const long_url = await client.hGet(`links:${req.params.link}`, 'l_url');
         // Debug log
         // console.log(long_url);
@@ -62,7 +66,7 @@ app.post('/api/link', async (req,res) => {
     if(!validateUrl(url)) {
         return res.status(400).send({message: "Malformed URL sent."});
     };
-    const new_url_nano = nanoid(7);
+    const new_url_nano = nanoid(process.env.LINK_LENGTH);
     const new_url = `http://127.0.0.1:${process.env.PORT}/${new_url_nano}`;
     const url_map = {
         s_url: new_url,
