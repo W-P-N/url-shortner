@@ -1,4 +1,4 @@
-import { createClient } from 'redis';
+import { createClient, SCHEMA_FIELD_TYPE,  } from 'redis';
 
 async function connectDb() {
     const client = createClient({
@@ -14,13 +14,11 @@ async function connectDb() {
     
     await client.connect();
     console.log("Database Connected");
-    await client.close();
-    console.log("Database Closed");
 };
 
 export default async function configure() {
     try {
-        await connectDb();
+        return await connectDb();
     } catch (e) {
         console.error(e);
     }
