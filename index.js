@@ -35,7 +35,10 @@ app.get('/:link', async(req, res) => {
         const long_url = await client.hGet(`links:${req.params.link}`, 'l_url');
         // Debug log
         // console.log(long_url);
-        res.redirect(long_url);
+        if(long_url) {
+            return res.redirect(long_url);
+        };
+        return res.status(502).send({message: "URL not found"});
     } catch(error) {
         console.error(error);
         return res.status(500).send({message: "Unable to get req link"});
