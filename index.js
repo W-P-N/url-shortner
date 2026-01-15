@@ -71,12 +71,28 @@ app.post('/api/link', async (req,res) => {
     if(isNaN(link_length)) {
         throw new Error('LINK_LENGTH must be a valid number.');
     };
-    const new_url_nano = nanoid(link_length);
-    const new_url = `http://127.0.0.1:${process.env.PORT}/${new_url_nano}`;
+
+    let short_code;
+    let success = false;
+    const maxRetries = 5;
+
+    for(let i=0; i<maxRetries; i++) {
+        short_code = nanoid(link_length);
+        const result = await client.setNX(`links:${short_code}`, url);
+        if(result == 1) {
+            success = true;
+            break;
+        };
+    };
+    if(!success) {
+        return res.status(500).send({ message: "Failed to generate unique code after multiple attempts."});
+    };
+
+    const new_url = `http://127.0.0.1:${process.env.PORT}/${short_code}`;
     // Debug log
     // console.log(url_map);
     try {
-        await client.set(`links:${new_url_nano}`, url);
+        await client.set(`links:${short_code}`, url);
     } catch (error) {
         console.error(error);
         return res.status(502).send({message: "Bad Gateway: Unable to process request"})
