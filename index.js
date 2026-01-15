@@ -82,9 +82,27 @@ app.post('/api/link', async (req,res) => {
 // Debug Log
 // console.log(process.env);
 
-app.listen(process.env.PORT, (e) => {
+const server = app.listen(process.env.PORT, (e) => {
     console.log("App listening on port: ", process.env.PORT);
 });
+
+let shutting_down = false;
+
+const gracefulShutdown = () => {
+    if(shutting_down) {
+        return;
+    };
+    console.log('\nShutting down gracefully...');
+    shutting_down = true;
+    server.close(async() => {
+        await client.quit();
+        console.log('Closed out remaning connections');
+        process.exit(0);
+    });
+};
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
 
 
 
