@@ -52,12 +52,12 @@ app.get('/:link', async(req, res) => {
         // Debug log
         // console.log(long_url);
         if(long_url) {
-            return res.redirect(long_url);
+            return res.redirect(301, long_url);
         };
-        return res.status(502).send({message: "URL not found"});
+        return res.status(404).send({message: "URL not found"});
     } catch(error) {
         console.error(error);
-        return res.status(500).send({message: "Unable to get req link"});
+        return res.status(404).send({message: "Unable to get req link"});
     }
 });
 
