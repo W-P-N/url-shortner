@@ -45,7 +45,8 @@ function validateUrl(input) {
 app.get('/:link', async(req, res) => {
     try {
         const input = req.params.link;
-        if(!input || input.length < process.env.LINK_LENGTH) {
+        const link_length = parseInt(process.env.LINK_LENGTH, 10);
+        if(!input || input.length < link_length) {
             return res.status(400).send({message: "Invalid input"});
         };
         const long_url = await client.get(`links:${req.params.link}`);
@@ -66,7 +67,11 @@ app.post('/api/link', async (req,res) => {
     if(!validateUrl(url)) {
         return res.status(400).send({message: "Malformed URL sent."});
     };
-    const new_url_nano = nanoid(process.env.LINK_LENGTH);
+    const link_length = parseInt(process.env.LINK_LENGTH, 10);
+    if(isNaN(link_length)) {
+        throw new Error('LINK_LENGTH must be a valid number.');
+    };
+    const new_url_nano = nanoid(link_length);
     const new_url = `http://127.0.0.1:${process.env.PORT}/${new_url_nano}`;
     // Debug log
     // console.log(url_map);
