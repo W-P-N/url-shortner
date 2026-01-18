@@ -1,13 +1,10 @@
 import app from "./app.js";
 import AppConfig from "./config/env.js";
-import { connectDb, getClient } from "./config/redis.js";
+import client from "./config/redis.js";
 
 let shuttingDown = false;
 
 async function startServer() {
-    await connectDb();
-    const client = await getClient();
-
     const server = app.listen(AppConfig.PORT, () => {
     });
 

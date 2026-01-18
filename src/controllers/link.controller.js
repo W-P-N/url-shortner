@@ -1,11 +1,10 @@
 import { nanoid } from "nanoid";
-import { getClient } from "../config/redis.js";
+import client from "../config/redis.js";
 import { validateLink } from "../utils/validator.js";
 import AppConfig from "../config/env.js";
 
 export async function redirectLink(req, res) {
     try {
-        const client = await getClient();
         const { link } = req.params;
         if(!link || link.length < AppConfig.LINK_LENGTH) {
             return res.status(400).send({
@@ -28,7 +27,6 @@ export async function redirectLink(req, res) {
 };
 
 export async function createLink(req, res) {
-    const client = await getClient();
     const validationResult = validateLink(req.body);
     if(!validationResult.success) {
         return res.status(400).json({
