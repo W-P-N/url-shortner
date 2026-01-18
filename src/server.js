@@ -5,12 +5,10 @@ import { connectDb, getClient } from "./config/redis.js";
 let shuttingDown = false;
 
 async function startServer() {
-    console.log('Connecting db...');
     await connectDb();
     const client = await getClient();
 
     const server = app.listen(AppConfig.PORT, () => {
-        console.log(`Server listening on port: ${AppConfig.PORT}`);
     });
 
     const gracefulShutdown = () => {
@@ -18,10 +16,8 @@ async function startServer() {
             return;
         };
         shuttingDown = true;
-        console.log('\nShutting down gracefully....');
         server.close(async() => {
             await client.quit();
-            console.log('Closed out remaining connections');
             process.exit(0);
         });
     };

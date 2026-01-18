@@ -7,14 +7,12 @@ export async function redirectLink(req, res) {
     try {
         const client = await getClient();
         const { link } = req.params;
-        console.log(link);
         if(!link || link.length < AppConfig.LINK_LENGTH) {
             return res.status(400).send({
                 message: "Invalid input"
             });
         }
         const long_url = await client.get(`links:${link}`);
-        console.log(long_url);
         if(long_url) {
             return res.redirect(301, long_url);
         };
