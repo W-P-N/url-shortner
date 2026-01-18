@@ -18,7 +18,7 @@ export async function redirectLink(req, res) {
         if(long_url) {
             return res.redirect(301, long_url);
         };
-        return res.status(304).send({
+        return res.status(404).send({
             message: 'URL not found'
         });
     } catch (error) {
