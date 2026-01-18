@@ -15,7 +15,7 @@ async function startServer() {
         if(shuttingDown) {
             return;
         };
-        logger.info('\nShutting down gracefully...');
+        logger.info('Shutting down gracefully...');
         shuttingDown = true;
         server.close(async() => {
             await client.quit();
