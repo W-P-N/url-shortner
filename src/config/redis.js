@@ -1,5 +1,6 @@
 import { createClient } from "redis";
 import AppConfig from "./env.js";
+import logger from "./logger.js";
 
 const client =  createClient({
     username: 'default',
@@ -12,5 +13,6 @@ const client =  createClient({
 
 client.on('error', err => console.error('Redis Client Error', err));
 await client.connect();
+logger.info("Database Connected");
 
 export default client;

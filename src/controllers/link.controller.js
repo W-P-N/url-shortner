@@ -1,3 +1,4 @@
+import logger from "../config/logger.js";
 import { nanoid } from "nanoid";
 import client from "../config/redis.js";
 import { validateLink } from "../utils/validator.js";
@@ -19,7 +20,7 @@ export async function redirectLink(req, res) {
             message: 'URL not found'
         });
     } catch (error) {
-        console.error('Redirect Error:', error);
+        logger.error({err: error}, 'Redirect Error');
         return res.status(500).send({
             message: "Internal Server Error"
         });
