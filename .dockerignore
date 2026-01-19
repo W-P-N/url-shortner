@@ -1,0 +1,18 @@
+# Git and Docker files
+
+.git
+.gitignore
+Dockerfile
+.dockerignore
+
+# Dependencies are installed in the container
+
+node_modules
+
+# Environment variables should not be in the image
+
+.env
+
+# Documentation and temporary files
+
+docs/
